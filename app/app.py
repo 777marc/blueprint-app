@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from dotenv import load_dotenv
@@ -15,20 +15,20 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///./site.db')
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-key-please-change')
 
-    
+
     db.init_app(app)
 
 
     migrate = Migrate(app, db)
 
 
-    @app.route('/hello')
+    @app.route('/')
     def hello():
-        return 'Hello, World!'
+        return render_template('index.html')
 
 
-    from . import auth
-    app.register_blueprint(auth.bp)
+    from app.auth.app import bp as auth_bp
+    app.register_blueprint(auth_bp)
 
 
     return app
