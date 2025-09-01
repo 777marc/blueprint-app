@@ -2,7 +2,8 @@ from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from dotenv import load_dotenv
-from .extensions import db
+from .extensions import db, login_manager
+from recipes.auth.models import User
 
 import os
 
@@ -15,8 +16,13 @@ def create_app():
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev-key-please-change')
 
     db.init_app(app)
+    login_manager.init_app(app)
 
     migrate = Migrate(app, db)
+
+    @login_manager.user_loader
+    def load_user(uid):
+        return User.query.get(int(uid))
 
     @app.route('/')
     def hello():

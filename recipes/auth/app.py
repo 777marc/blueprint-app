@@ -7,7 +7,7 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 from recipes.auth.models import User
 from flask_bcrypt import Bcrypt
-from ..extensions import db
+from ..extensions import db, login_manager
 
 
 bcrypt = Bcrypt()
@@ -23,7 +23,7 @@ def login():
         if user and bcrypt.check_password_hash(user.password, password):
             login_user(user)
             print(f"User {user.username} logged in")
-            return redirect(url_for('index'))
+            return render_template('auth/index.html')
         
     return render_template('auth/login.html')
 
